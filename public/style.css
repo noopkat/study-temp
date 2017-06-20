@@ -1,5 +1,6 @@
 body {
   font-family: sans-serif;
+  background-color: white;
 }
 
 p {
@@ -12,6 +13,10 @@ p {
 }
 
 @media screen and (max-device-width : 790px)  {
+  body {
+    background-color: #5abfb1;
+  }
+
   p {
     display:none;
   }
@@ -24,6 +29,7 @@ p {
 }
 
   .digitbox {
+    border-radius: 20px;
     width: 47%;
     font-family: 'Aldrich', sans-serif;
     text-align: center;
