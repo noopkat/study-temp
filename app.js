@@ -1,6 +1,7 @@
 require('dotenv').config();
 const skateboard = require('skateboard');
 const startReceiver = require('./lib/receiver');
+let cache; 
 
 const setUpSocket = function(hubListener) {
   skateboard({
@@ -9,6 +10,9 @@ const setUpSocket = function(hubListener) {
     transports: ['polling', 'websocket']
   }, function(stream) {
     console.log('skateboard connected');
+    if (cache !== undefined) {
+      stream.write(cache);
+    }
     listenForDeviceData(stream, hubListener);
   });
 }
@@ -19,6 +23,7 @@ const listenForDeviceData = function(stream, hubListener) {
     if (from === process.env.IOT_DEVICE_ID) {
       const jsonData = JSON.stringify(eventData.body);
       console.log('Message Received: ' + jsonData);
+      cache = jsonData;
       stream.write(jsonData);
     }
   });
