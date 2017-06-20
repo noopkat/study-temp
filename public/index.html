@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>I offer no condolences to you using this</title>
+  </head>
+  <body>
+    <p id="info"></p>
+    <script type="text/javascript" src="skateboard.min.js"></script> 
+    <script>
+      var info = document.getElementById('info');
+
+       skateboard(function(stream) { 
+        stream.on('data', function(data) {
+           console.log(data);
+           data = JSON.parse(data);
+           info.innerHTML = 'It\'s ' + Math.round(data.temperature) + '&deg;c, at ' + Math.round(data.humidity) + '% humidity'; 
+        });
+      });
+    </script>
+  </body>  
+</html>
