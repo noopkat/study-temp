@@ -14,7 +14,7 @@ const setUpSocket = function(hubListener) {
 }
 
 const listenForDeviceData = function(stream, hubListener) {
-  hubListener.on('message', (eventData) => {
+  hubListener.on('message', function(eventData) {
     const from = eventData.annotations['iothub-connection-device-id'];
     if (from === process.env.IOT_DEVICE_ID) {
       const jsonData = JSON.stringify(eventData.body);
