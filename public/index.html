@@ -22,7 +22,7 @@
         stream.on('data', function(data) {
            console.log(data);
            data = JSON.parse(data);
-           info.innerHTML = 'It\'s ' + Math.round(data.temperature) + '&deg;c, at ' + Math.round(data.humidity) + '% humidity'; 
+           info.innerHTML = Math.round(data.temperature) + '&deg;c ' + Math.round(data.humidity) + '% humidity'; 
            temp.innerHTML = Math.round(data.temperature) + '&deg;c';
            humidity.innerHTML = Math.round(data.humidity) + '%';
         });
