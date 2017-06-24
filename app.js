@@ -1,6 +1,7 @@
 require('dotenv').config();
 const skateboard = require('skateboard');
 const startReceiver = require('./lib/receiver');
+const room = new Set();
 let cache; 
 
 const setUpSocket = function(hubListener) {
@@ -10,21 +11,26 @@ const setUpSocket = function(hubListener) {
     transports: ['polling', 'websocket']
   }, function(stream) {
     console.log('skateboard connected');
+    room.add(stream);
     if (cache !== undefined) {
       stream.write(cache);
     }
-    listenForDeviceData(stream, hubListener);
+    stream.on('end', function() {
+      room.delete(stream);
+    });
   });
-}
+  
+  listenForDeviceData(hubListener);
+};
 
-const listenForDeviceData = function(stream, hubListener) {
+const listenForDeviceData = function(hubListener) {
   hubListener.on('message', function(eventData) {
     const from = eventData.annotations['iothub-connection-device-id'];
     if (from === process.env.IOT_DEVICE_ID) {
       const jsonData = JSON.stringify(eventData.body);
       console.log('Message Received: ' + jsonData);
       cache = jsonData;
-      stream.write(jsonData);
+      room.forEach(stream => stream.write(jsonData));
     }
   });
 };
