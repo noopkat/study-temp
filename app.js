@@ -1,10 +1,10 @@
 require('dotenv').config();
 const skateboard = require('skateboard');
-const startReceiver = require('./lib/receiver');
+const startReceivers = require('./lib/receiver');
 const room = new Set();
 let cache; 
 
-const setUpSocket = function(hubListener) {
+const setUpSocket = function() {
   skateboard({
     dir: __dirname + '/public',         
     port : process.env.PORT || 3000,                        
@@ -19,20 +19,19 @@ const setUpSocket = function(hubListener) {
       room.delete(stream);
     });
   });
-  
-  listenForDeviceData(hubListener);
 };
 
 const listenForDeviceData = function(hubListener) {
-  hubListener.on('message', function(eventData) {
-    const from = eventData.annotations['iothub-connection-device-id'];
-    if (from === process.env.IOT_DEVICE_ID) {
-      const jsonData = JSON.stringify(eventData.body);
-      console.log('Message Received: ' + jsonData);
-      cache = jsonData;
-      room.forEach(stream => stream.write(jsonData));
-    }
-  });
+      hubListener.on('message', function(eventData) {
+      const from = eventData.annotations['iothub-connection-device-id'];
+      if (from === process.env.IOT_DEVICE_ID) {
+        const jsonData = JSON.stringify(eventData.body);
+        console.log('Message Received: ' + jsonData);
+        cache = jsonData;
+        room.forEach(stream => stream.write(jsonData));
+      }
+    });
 };
 
-startReceiver().then(hubListener => setUpSocket(hubListener));
+startReceivers(listenForDeviceData);
+setUpSocket();
