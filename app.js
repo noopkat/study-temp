@@ -22,15 +22,15 @@ const setUpSocket = function() {
 };
 
 const listenForDeviceData = function(hubListener) {
-      hubListener.on('message', function(eventData) {
-      const from = eventData.annotations['iothub-connection-device-id'];
-      if (from === process.env.IOT_DEVICE_ID) {
-        const jsonData = JSON.stringify(eventData.body);
-        console.log('Message Received: ' + jsonData);
-        cache = jsonData;
-        room.forEach(stream => stream.write(jsonData));
-      }
-    });
+  hubListener.on('message', function(eventData) {
+    const from = eventData.annotations['iothub-connection-device-id'];
+    if (from === process.env.IOT_DEVICE_ID) {
+      const jsonData = JSON.stringify(eventData.body);
+      console.log('Message Received: ' + jsonData);
+      cache = jsonData;
+      room.forEach(stream => stream.write(jsonData));
+    }
+  });
 };
 
 startReceivers(listenForDeviceData);
