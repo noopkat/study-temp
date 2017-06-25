@@ -1,6 +1,6 @@
 require('dotenv').config();
 const skateboard = require('skateboard');
-const startReceivers = require('./lib/receiver');
+const Receiver = require('azure-iothub-receiver');
 const room = new Set();
 let cache; 
 
@@ -21,17 +21,22 @@ const setUpSocket = function() {
   });
 };
 
-const listenForDeviceData = function(hubListener) {
-  hubListener.on('message', function(eventData) {
-    const from = eventData.annotations['iothub-connection-device-id'];
-    if (from === process.env.IOT_DEVICE_ID) {
-      const jsonData = JSON.stringify(eventData.body);
-      console.log('Message Received: ' + jsonData);
-      cache = jsonData;
-      room.forEach(stream => stream.write(jsonData));
-    }
-  });
-};
+const receiver = new Receiver({
+  connectionString: process.env.IOT_CONN_STRING
+});
 
-startReceivers(listenForDeviceData);
+receiver.on('message', function(eventData) {
+  const from = eventData.annotations['iothub-connection-device-id'];
+  if (from === process.env.IOT_DEVICE_ID) {
+    const jsonData = JSON.stringify(eventData.body);
+    console.log('Message Received: ' + jsonData);
+    cache = jsonData;
+    room.forEach(stream => stream.write(jsonData));
+  }
+});
+
+receiver.on('error', function(error) {
+  console.error(error);
+});
+
 setUpSocket();

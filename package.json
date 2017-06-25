@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "azure-event-hubs": "0.0.8",
+    "azure-iothub-receiver": "^1.0.1",
     "dotenv": "^4.0.0",
     "skateboard": "^2.0.0"
   }
