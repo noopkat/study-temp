@@ -22,14 +22,20 @@ const setUpSocket = function() {
 };
 
 const receiver = new Receiver({
-  connectionString: process.env.IOT_CONN_STRING
+  connectionString: process.env.IOT_CONN_STRING,
+  consumerGroup: process.env.IOT_CONSUMER_GROUP 
 });
 
 receiver.on('message', function(eventData) {
   const from = eventData.annotations['iothub-connection-device-id'];
   if (from === process.env.IOT_DEVICE_ID) {
-    const jsonData = JSON.stringify(eventData.body);
-    console.log('Message Received: ' + jsonData);
+    console.log('Message Received:', eventData.body);
+    let jsonData = '';
+    if (eventData.body.data) {
+      jsonData = new Buffer(eventData.body.data).toString();
+    } else {
+      jsonData = JSON.stringify(eventData.body);
+    }
     cache = jsonData;
     room.forEach(stream => stream.write(jsonData));
   }
