@@ -32,7 +32,8 @@ receiver.on('message', function(eventData) {
     console.log('Message Received:', eventData.body);
     let jsonData = '';
     if (eventData.body.data) {
-      jsonData = new Buffer(eventData.body.data).toString();
+      eventData.body.data = new Buffer(eventData.body.data).toString();
+      jsonData = JSON.stringify(eventData.body);
     } else {
       jsonData = JSON.stringify(eventData.body);
     }
