@@ -31,9 +31,8 @@ receiver.on('message', function(eventData) {
   if (from === process.env.IOT_DEVICE_ID) {
     console.log('Message Received:', eventData.body);
     let jsonData = '';
-    if (eventData.body.data) {
-      eventData.body.data = new Buffer(eventData.body.data).toString();
-      jsonData = JSON.stringify(eventData.body);
+    if (Buffer.isBuffer(eventData.body)) {
+      jsonData = eventData.body.toString();
     } else {
       jsonData = JSON.stringify(eventData.body);
     }
